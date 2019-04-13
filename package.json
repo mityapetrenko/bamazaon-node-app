@@ -1,0 +1,29 @@
+{
+  "name": "bamazon-app",
+  "version": "1.0.0",
+  "description": "Customer view order placement for products",
+  "main": "bamazonCustomer.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mityapetrenko/bamazon-node-app.git"
+  },
+  "keywords": [
+    "bamazon",
+    "node",
+    "product",
+    "order"
+  ],
+  "author": "Dmitriy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mityapetrenko/bamazon-node-app/issues"
+  },
+  "homepage": "https://github.com/mityapetrenko/bamazon-node-app#readme",
+  "dependencies": {
+    "inquirer": "^6.2.2",
+    "mysql": "^2.16.0"
+  }
+}
