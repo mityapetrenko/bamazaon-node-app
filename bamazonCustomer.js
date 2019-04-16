@@ -18,6 +18,9 @@ var connection = mysql.createConnection({
 
 connection.connect(function(err) {
   if (err) throw err;
+  console.log("\nWelcome to Bamazon Store\n");
+  console.log("Please take a look at our inventory!");
+  console.log("***************************************************************");
   displayProducts();
 
 });
@@ -27,6 +30,8 @@ function displayProducts() {
       for (var i = 0; i < res.length; i++) {
         console.log("Item ID: " +res[i].item_id+ "|| Product: "+ res[i].product_name+ "|| Price: "+ res[i].price+ "|| Quantity: "+ res[i].stock_quantity);
       }
+      console.log("*************************************************************");
+      console.log("\n");
       placeOrder();
     });
   }
@@ -46,34 +51,39 @@ function placeOrder() {
       .then(function(answer) {
           var product= answer.product;
           var quantity=answer.quantity;
-        console.log( "You picked item: "+product+  " with a quantity of : "+ quantity);
+        console.log("\n");
+        console.log("******************************************************************");
+        console.log( "You picked item number: "+product+  " with a quantity of : "+ quantity);
         
         connection.query("SELECT * FROM products WHERE ?",{item_id: answer.product}, function(err,res){
-            console.log("Your product details: "+ res[0].product_name);
-            if (quantity< res[0].stock_quantity) {
-                console.log("Your product is in stock, your order will be placed.");
+            var updatedQuantity=res[0].stock_quantity-quantity;
+            var selectItem=res[0].product_name;
+                console.log("Your item is: "+ selectItem);
+                console.log("*********************************");
+                if (quantity< res[0].stock_quantity) {
+                    console.log("Your product is in stock, your order will be placed.");
+                    console.log("********************************************************");
+                    connection.query("UPDATE products SET ? WHERE ?",
+                    [
+                    {
+                        stock_quantity: res[0].stock_quantity-quantity
+                    },
+                    {
+                        item_id: answer.product
+                    }
+                    ], function(err,res){
+                        console.log("Only "+ updatedQuantity + " " + selectItem+  " left.\nCome and get them");
+                        console.log("\nThank you for shopping our Bamazon store.\nWe look forward to seeing you soon");
+                    })
                 console.log("Your total is $ "+ res[0].price* quantity);
-            }else{
-                console.log("Your item is out of stock, please pick something else");
-                placeOrder();
-            }
-            
+                console.log("************************");
+                } else  {
+                    console.log("Your item is out of stock, please pick something else");
+                    console.log("\n");
+                        displayProducts();
+                }
+               
+                connection.end();
         })
-    
-        // connection.query("UPDATE products SET stock_quantity = '(res[0].stock_quantity - quantity)' + WHERE 'item_id: answer.product' ", function(err,results){
-        //     displayProducts(results);
-        // });
-        displayProductsUp();
-        connection.end();
-      });
-  }
-  
-function displayProductsUp() {
-    var query = "UPDATE products SET stock_quantity = '(res[0].stock_quantity - quantity)' + WHERE 'item_id: answer.product' ";
-    connection.query(query, function(err, res) {
-      for (var a = 0; a < res.length; a++) {
-        console.log("Item ID: " +res[a].item_id+ "|| Product: "+ res[a].product_name+ "|| Price: "+ res[a].price+ "|| Quantity: "+ res[a].stock_quantity);
-      }
-      placeOrder();
-    });
-  }
+  })
+}
